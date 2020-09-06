@@ -36,11 +36,13 @@ class Rabbit extends Thread {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println("Rabbit run " + i + " metters");
-                System.out.println("Rabbit remain " + (30 - i) + " metters!!!");
-                if (i == 30) {
+
+                if (i != 30)
+                    System.out.println("Rabbit   remain " + (30 - i) + " metters!!!");
+
+                if (i == 30)
                     System.out.println("Rabbit arrive!!!");
-                }
+
             }
         }
 
@@ -60,15 +62,15 @@ class Tortoise extends Thread {
             System.out.println("Tortoise run " + i + " metters");
             if (i % 10 == 0) {
                 try {
-                    System.out.println("Tortoise remain " + (30 - i) + " metters!!!");
+                    if (i != 30)
+                        System.out.println("Tortoise remain " + (30 - i) + " metters!!!");
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            if (i == 30) {
+            if (i == 30)
                 System.out.println("Tortoise arrive!!!");
-            }
 
         }
     }
