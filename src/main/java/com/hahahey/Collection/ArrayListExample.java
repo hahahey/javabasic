@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ListExample {
+public class ArrayListExample {
+
     public static void main(String[] args) {
 
 /**
@@ -52,6 +54,21 @@ public class ListExample {
                 //从起始位置取得的原数组的元素长度，即需要添加的元素个数
                 5);
         Arrays.stream(str1).forEach(System.out::print);
+
+        // 线程安全的list  写时复制ArrayList
+        // 增加元素的时候是将底层数组的长度一个一个的增加，并非先初始容量然后再扩容，区别于ArrayList
+        //
+        // 优点：解决集合多线程读写并发问题，增删改上加锁，但是读不加锁，读方面优于Vector
+        // 缺点：在写入时会复制一份到内存中，内存开销大，只能保证数据最终一致性，不能保证实时一致性
+        CopyOnWriteArrayList copyOnWriteArrayList = new CopyOnWriteArrayList();
+        copyOnWriteArrayList.add("a");
+        copyOnWriteArrayList.add("b");
+        copyOnWriteArrayList.remove("a");
+        copyOnWriteArrayList.forEach(System.out::print);
+
+
+
+
 
 
     }
