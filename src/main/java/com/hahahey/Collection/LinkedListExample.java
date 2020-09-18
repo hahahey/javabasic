@@ -54,7 +54,9 @@ public class LinkedListExample  {
         }
 
         //打印输出
-        list.stream().forEach(System.out::println);
+        //list.stream().forEach(System.out::println);
+
+
 
     }
 }

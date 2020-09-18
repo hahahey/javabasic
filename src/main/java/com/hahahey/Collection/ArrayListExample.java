@@ -1,13 +1,43 @@
 package com.hahahey.Collection;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ArrayListExample {
+
+
+    static List<String> addEle() {
+        List<String> list = new ArrayList();
+        for (int i = 0; i < 11; i++) {
+            list.add(String.valueOf(i));
+        }
+        return list;
+    }
+
+
+    static void removeByFor(List<String> list) {
+
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) == "3") {
+                list.remove(i);
+            }
+        }
+        list.stream().forEach(System.out::print);
+    }
+
+
+    static void removeByIter(List<String> list) {
+        //使用迭代器来删除元素
+        Iterator<String> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next() == "3") {
+                iterator.remove();
+            }
+        }
+        list.stream().forEach(System.out::print);
+    }
+
 
     public static void main(String[] args) {
 
@@ -20,29 +50,22 @@ public class ArrayListExample {
  *
  *
  **/
+        List<String> list = addEle();
 
 
-        List<String> list = new ArrayList();
-        for (int i = 0; i < 11 ; i++) {
-            list.add(String.valueOf(i));
-        }
+
+        //subList 相当于list的视图，支持集合的所有方法，任何对该视图的操作都会被原集合所取代
+        List<String> subList = list.subList(1, 3);
+        System.out.println(subList);
+        subList.add("100");
+        System.out.println(list);
 
 
-//        for (int i = 0; i < list.size(); i++) {
-//            if(list.get(i) == "3"){
-//                list.remove(i);
-//            }
-//        }
 
 
-        //使用迭代器来删除元素
-        Iterator<String> iterator = list.iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next() == "3") {
-                iterator.remove();
-            }
-        }
 
+//        removeByFor(list);
+//        removeByIter(list);
 
         String[] str = {"0", "1", "2", "3", "4", "5", "6"};
         String[] str1 = new String[10];
@@ -53,7 +76,25 @@ public class ArrayListExample {
                 str1, 2,
                 //从起始位置取得的原数组的元素长度，即需要添加的元素个数
                 5);
-        Arrays.stream(str1).forEach(System.out::print);
+        //Arrays.stream(str1).forEach(System.out::print);
+
+
+        // 并发修改异常 java.util.ConcurrentModificationException
+        //List<String> list1 = new ArrayList<>();
+//        CopyOnWriteArrayList list1 = new CopyOnWriteArrayList();
+//
+//        for (int i = 0; i <5 ; i++) {
+//            new Thread(()->{
+//                list1.add(UUID.randomUUID().toString().substring(0,3));
+//                list1.add(UUID.randomUUID().toString().substring(0,3));
+//                list1.add(UUID.randomUUID().toString().substring(0,3));
+//                System.out.println(list1.toString());
+//            },String.valueOf(i)).start();
+//        }
+
+
+
+
 
         // 线程安全的list  写时复制ArrayList
         // 增加元素的时候是将底层数组的长度一个一个的增加，并非先初始容量然后再扩容，区别于ArrayList
@@ -64,11 +105,7 @@ public class ArrayListExample {
         copyOnWriteArrayList.add("a");
         copyOnWriteArrayList.add("b");
         copyOnWriteArrayList.remove("a");
-        copyOnWriteArrayList.forEach(System.out::print);
-
-
-
-
+        //copyOnWriteArrayList.forEach(System.out::print);
 
 
     }
