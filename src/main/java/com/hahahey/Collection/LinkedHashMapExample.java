@@ -3,13 +3,20 @@ package com.hahahey.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * @author lizhongkai
- * @description
- * @date 2020-09-19
- */
+
 public class LinkedHashMapExample {
     public static void main(String[] args) {
+
+
+        /**
+         * key 和value 都允许重复
+         * 有序 双向链表保证顺序
+         *
+         *
+         *
+         *
+         *
+         **/
 
         Map<String,String> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("四","4");
