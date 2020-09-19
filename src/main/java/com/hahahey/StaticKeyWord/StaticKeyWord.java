@@ -1,4 +1,4 @@
-package com.hahahey.StaticKeyWorld;
+package com.hahahey.StaticKeyWord;
 
 
 public class StaticKeyWord {
