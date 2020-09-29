@@ -11,4 +11,16 @@ https://www.cnblogs.com/xiaoxi/category/891936.html
 
 
 
+git clone 缓慢解决办法
+《一》
+(1)在 https://www.ipaddress.com/ 查找 http://github.com 和 http://global-ssl.fastly.Net对应的ip地址
+(2)将对应的ip和name添加到 C:\Windows\System32\drivers\etc\ 下的hosts文件里
+# GItHub
+199.232.68.249     github.global.ssl.fastly.net
+140.82.112.3       github.com
+(3)在终端刷新DNS
+ipconfig/flushdns
 
+《二》
+使用镜像库下载
+git clone -b branch-2.2 https://github.com.cnpmjs.org/apache/spark.git
