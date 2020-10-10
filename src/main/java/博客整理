@@ -24,3 +24,11 @@ ipconfig/flushdns
 《二》
 使用镜像库下载
 git clone -b branch-2.2 https://github.com.cnpmjs.org/apache/spark.git
+
+
+
+github上已经有仓库时，把一个已有的本地仓库与之关联，然后把内容推送到github仓库
+git remote add origin https://github.com/xxx.git
+git push -u origin master 把本地的master分支和远程的master分支关联起来
+
+git push origin master 把本地master分支的最新修改推送到github上
