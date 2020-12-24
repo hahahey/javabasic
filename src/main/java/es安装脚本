@@ -91,3 +91,91 @@ sed -i '/^cluster.name:/c\'cluster.name: $es_cluster_name'' elasticsearch.yml
 
 
 sed -i '/^node.name:/c\'cluster.name: $es_cluster_name'' elasticsearch.yml
+
+
+
+//批量插入数据
+POST /lzk_api/_bulk
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T13:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T12:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T11:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T10:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T09:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T08:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T07:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+
+
+
+GET /lzk_api/_search
+{
+  "size":0,
+  "aggs":{
+    "total_count":{
+      "date_histogram": {
+        "field": "log_time",
+        "interval": "1m",
+        "min_doc_count": 0,
+        "format": "yyyy-MM-dd HH:mm:ss",
+        "time_zone": "+08:00",
+        "extended_bounds": {
+          "min": "2020-10-26 15:00:00",
+          "max": "2020-10-26 15:05:00"
+        }
+      }
+    }
+  }
+}
+
+PUT /lzk_api/_bulk
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-26","log_time":"2020-10-26T16:05:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-26","log_time":"2020-10-26T17:03:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-26","log_time":"2020-10-26T15:03:07.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-26","log_time":"2020-10-26T15:04:59.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-26","log_time":"2020-10-26T15:05:07.000Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+
+
+POST /lzk_api/_delete_by_query
+{
+"query":{
+  "match_all":{}
+}
+}
+
+
+GET /lzk_api/_search
+{
+"query":{
+  "match_all":{}
+}
+}
+
+
+GET /lzk_api/_search
+{
+
+"query": {
+  "range": {
+    "log_time": {
+      "gte": "2020-10-26 15:05:07",
+      "lte": "2020-10-26 17:05:00"
+      , "format": "yyyy-MM-dd HH:mm:ss"
+    }
+  }
+}
+}
+
+GET  /lzk_api/_count
+
+
