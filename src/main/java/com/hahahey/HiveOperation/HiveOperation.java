@@ -25,13 +25,7 @@ public class HiveOperation {
         System.out.println("tOpenSessionResp  " + openResp.getStatus());
 
 
-//        Class.forName("org.apache.hive.jdbc.HiveDriver");
-//        Connection conn  = DriverManager.getConnection("jdbc:hive2://172.16.10.223:10000");
-//        PreparedStatement preparedStatement = conn.prepareStatement("select * from default.lzk");
-//        ResultSet resultSet = preparedStatement.executeQuery();
-//        while (resultSet.next() != false) {
-//            System.out.println(resultSet.getInt(1));
-//        }
+
 
 
     }

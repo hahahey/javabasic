@@ -113,7 +113,7 @@ POST /lzk_api/_bulk
 
 
 
-GET /lzk_api/_search
+GET /lzk_api/_search..
 {
   "size":0,
   "aggs":{
