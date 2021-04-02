@@ -7,7 +7,7 @@ import java.util.Vector;
 public class VectorExample {
     public static void main(String[] args) {
         /**
-         *  vector 线程安全，使用synchroized 关键字修饰方法。
+         *  vector 线程安全，使用synchronized 关键字修饰方法。
          *
          *
          *

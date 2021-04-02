@@ -41,26 +41,73 @@ public class HashMapExample {
          *
          *
          **/
-        Map<String,String> map = new HashMap<>(16);
-        map.put("1","a");
-        map.put("2","b");
-        map.put("3","c");
-        map.put("4","d");
-        map.put("5","e");
-        map.put("6","f");
-        map.put("7","g");
-        map.put("8","h");
-        map.put("9","i");
-        map.put("10","j");
-        map.put("11","k");
-        map.put("12","l");
-        map.put("13","m");
-        map.put("14","n");
-        map.put("15","o");
-        map.put("16","p");
-        map.put("17","q");
+        Map<String, String> map = new HashMap<>();
 
-        System.out.println(map);
+
+
+
+
+        map.put("1", "a");
+        map.put("2", "b");
+        map.put("3", "c");
+        map.put("4", "d");
+        map.put("5", "e");
+        map.put("6", "f");
+        map.put("7", "g");
+        map.put("8", "h");
+        map.put("9", "i");
+        map.put("10", "j");
+        map.put("11", "k");
+        map.put("12", "l");
+        map.put("13", "m");
+        map.put("14", "n");
+        map.put("15", "o");
+        map.put("16", "p");
+        map.put("17", "q");
+
+        System.out.println(12 > 12 );
+
+        int cap = 10;
+        int n = cap - 1;
+        System.out.println(Integer.toBinaryString(n));
+
+        int n1  = n >>> 1;
+        System.out.println(Integer.toBinaryString(n1));
+
+        int n2  = n >>> 2;
+        System.out.println(Integer.toBinaryString(n2));
+
+        int n4 = n >>> 4;
+        System.out.println(Integer.toBinaryString(n4));
+
+        int n8  = n >>> 8;
+        System.out.println(Integer.toBinaryString(n8));
+
+        int n16  = n >>> 16;
+        System.out.println(Integer.toBinaryString(n16));
+
+//        map.put("1", "a");
+//        map.put("2", "b");
+//        map.put("3", "c");
+//        map.put("4", "d");
+//        map.put("5", "e");
+//        map.put("6", "f");
+//        map.put("7", "g");
+//        map.put("8", "h");
+//        map.put("9", "i");
+//        map.put("10", "j");
+//        map.put("11", "k");
+//        map.put("12", "l");
+//        map.put("13", "m");
+//        map.put("14", "n");
+//        map.put("15", "o");
+//        map.put("16", "p");
+//        map.put("17", "q");
 
     }
+
+
+
+
+
 }
