@@ -1,0 +1,77 @@
+所有的非静态同步方法用的都是同一把锁--实例对象本身
+
+synchronized实现同步的基础：Java中的每一个对象都可以作为锁
+具体表现为以下3种形式
+对于普通同步方法，锁的是当前实例对象
+对于静态同步方法，锁的是当前类的Class对象
+对于同步方法块，锁的是synchronized括号里配置的对象
+
+第一个线程试图访问同步代码块时，它首先必须得到锁，退出或抛出异常时必须释放锁
+
+也就是说如果一个实例对象的非静态同步方法获取锁后，该实例对象的其他非静态同步方法必须等待获取锁的方法释放锁后才能获取锁
+可是别的实例对象的非静态同步方法因为跟该实例对象的非静态同步方法用的是不同的锁，所以不需要等待该实例对象已获取锁的非静态同步方法释放锁就可以获取他们自己的锁
+
+所有的静态同步方法用的也是同一把锁--类对象本身
+这两把锁(this/Class)是两个不同的对象，所以静态同步方法与非静态同步方法之间是不会有竞态条件的
+但是一旦一个静态同步方法获取锁后，其他的静态同步方法都必须等待该方法释放锁后才能获取锁
+而不管是同一个实例对象的静态同步方法之间
+还是不同的实例对象的静态同步方法之间吗，只要他们是同一个类的实例对象
+
+
+写时复制
+CopyOnWrite容器及写时复制的容器。往一个容器添加元素的时候，不直接往当前容器Object[]添加，而是先将当前容器Object[]进行copy
+复制一个新的容器Object[] newElements，然后新的容器Object[] newElecments里添加元素，添加完元素以后，而将原容器的引用指向新的容器 setArray(newElements)
+这样做的好处是可以对CopyOnWrite容器进行并发的读，而不需要加锁，因为当前容器不会添加任何元素，所以CopyOnWrite容器也是一种读写分离的思想，读和写不同的容器
+public boolean add(E e){
+    final ReentrantLock lock = this.lock;
+    lock.lock();
+    try{
+        Object[] elements = getArray();
+        int len = elements.length;
+        Object[] newElements = Arrays.copyOf(elements,len + 1);
+        newElements[len] = e;
+        setArray(newElements);
+        return true;
+    }finally{
+    lock.unlock();
+   }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

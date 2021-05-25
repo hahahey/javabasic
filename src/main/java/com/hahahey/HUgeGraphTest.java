@@ -11,7 +11,7 @@ import java.util.List;
 public class HUgeGraphTest {
 
         public static void main(String[] args) {
-            HugeClient hugeClient =  new HugeClient("http://172.16.10.224:8082", "hugegraph");
+            HugeClient hugeClient =  new HugeClient("http://192.168.241.103:8082", "hugegraph");
             ResultSet resultSet = hugeClient.gremlin().gremlin("g.V().hasLabel(\"身份证信息\")").execute();
             List<Object> list = new ArrayList<>();
 
