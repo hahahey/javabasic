@@ -1,0 +1,181 @@
+#!/bin/bash
+if [ $(id -u) != 0];then
+	echo "请使用root用户操作"
+exit 1
+fi
+#获取安装节点信息
+es_dir=/opt/elk
+cluster_name=cluster-es
+data_path=/opt/elk/elasticsearch-7.0.1/data
+log_path=/opt/elk/elasticsearch-7.0.1/log
+hosts=$1
+hostarr=(${hosts//,/ })
+for var in ${hostarr[@]}
+do
+	echo $var
+done
+#1.判断安装目录是否存在，不存在则自动创建目录
+if [ ! -d ${es_dir} ];then
+	echo "自动创建es安装目录 ${es_dir}"
+	mkdir -p ${es_dir}
+	fi
+
+#2.解压 es.tar.gz 到指定目录
+tar -zxf ./es.tar.gz -C ${es_dir}
+echo "文件解压成功"
+#3.修改 elasticsearch.yml 文件
+sed -i '/cluster.name:/c\cluster.name:cluster-es'
+
+
+
+
+
+es_param_config.ini
+
+[elasticsearch]
+#es安装目录
+es_dir=`awk -F '=' '/\[elasticsearch\]/$1~/es_dir/{print $2;exit}' $config_file`
+#es集群名称
+es_cluster_name=`awk -F '=' '/\[elasticsearch\]/$1~/es_cluster_name/{print $2;exit}' $config_file`
+#es节点所有ip地址，使用分号分割 例如: ip1;ip2;ip3  默认使用第一个ip地址作为初始化主节点
+hosts=
+#es节点端口号
+port=
+#es数据存储路径
+data_path=
+#es运行日志存储路径
+log_path=
+#设置启动es集群的用户名(若没有该用户则使用配置的用户名及密码创建用户)
+username=
+#设置启动es集群的密码
+passwd=
+[jvm]
+-Xms=1g
+-Xmx=1g
+
+
+config_file=./es_config
+
+es_dir=`awk -F '=' '/\[elasticsearch\]/$1~/es_dir/{print $2;exit}' $config_file`
+es_cluster_name=`awk -F '=' '/\[elasticsearch\]/$1~/es_cluster_name/{print $2;exit}' $config_file`
+hosts=`awk -F '=' '/\[elasticsearch\]/$1~/hosts/{len=split($2,a,";");for(i=1;i<=len;i++) print a[i]}' $config_file`
+port=`awk -F '=' '/\[elasticsearch\]/$1~/port/{print $2;exit}' $config_file`
+data_path=`awk -F '=' '/\[elasticsearch\]/$1~/data_path{print $2;exit}' $config_file`
+log_path=`awk -F '=' '/\[elasticsearch\]/$1~/log_path{print $2;exit}' $config_file`
+
+passwd=`awk -F '=' '/\[elasticsearch\]/$1~/passwd{print $2;exit}' $config_file`
+
+grep "^${username}:" /etc/passwd > /dev/null
+if [ $? -eq 0 ];then
+	echo "$username is exist! we will use this account to start elasticsearch service"
+else
+	echo "$username is not exist , we will create this account to start elasticsearch service"
+	pass=$(perl -e 'print crypt($ARGV[0], "password_salt")' $password)
+	useradd -p -m $pass $username
+	echo "$username has been created"
+fi
+
+if [ ! -d $es_dir ];then
+	mkdir -p $es_dir
+fi
+#解压es安装包
+tar -zxf ./es.tar.gz -C $es_dir
+echo "decompress elasticsearch.tar finished"
+#修改配置参数
+sed -i '/^-Xms/c\'-Xms=$Xms'' jvm.options
+sed -i '/^-Xmx/c\'-Xmx=$Xmx'' jvm.options
+#修改elasticsearch.yml文件
+sed -i '/^http.port:/c\'http.port: $port'' elasticsearch.yml
+sed -i '/^cluster.name:/c\'cluster.name: $es_cluster_name'' elasticsearch.yml
+
+
+
+sed -i '/^node.name:/c\'cluster.name: $es_cluster_name'' elasticsearch.yml
+
+
+
+//批量插入数据
+POST /lzk_api/_bulk
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T13:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T12:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T11:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T10:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T09:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T08:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-23","log_time":"2020-10-23T07:50:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+
+
+
+GET /lzk_api/_search..
+{
+  "size":0,
+  "aggs":{
+    "total_count":{
+      "date_histogram": {
+        "field": "log_time",
+        "interval": "1m",
+        "min_doc_count": 0,
+        "format": "yyyy-MM-dd HH:mm:ss",
+        "time_zone": "+08:00",
+        "extended_bounds": {
+          "min": "2020-10-26 15:00:00",
+          "max": "2020-10-26 15:05:00"
+        }
+      }
+    }
+  }
+}
+
+PUT /lzk_api/_bulk
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-26","log_time":"2020-10-26T16:05:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-26","log_time":"2020-10-26T17:03:00.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-26","log_time":"2020-10-26T15:03:07.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-26","log_time":"2020-10-26T15:04:59.783Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+{"index":{}}
+{"appId":"111","code":200,"log_date":"2020-10-26","log_time":"2020-10-26T15:05:07.000Z","openApiId":"eee","projectId":"1000000","redisHit": true ,"time":4}
+
+
+POST /lzk_api/_delete_by_query
+{
+"query":{
+  "match_all":{}
+}
+}
+
+
+GET /lzk_api/_search
+{
+"query":{
+  "match_all":{}
+}
+}
+
+
+GET /lzk_api/_search
+{
+
+"query": {
+  "range": {
+    "log_time": {
+      "gte": "2020-10-26 15:05:07",
+      "lte": "2020-10-26 17:05:00"
+      , "format": "yyyy-MM-dd HH:mm:ss"
+    }
+  }
+}
+}
+
+GET  /lzk_api/_count
+
+

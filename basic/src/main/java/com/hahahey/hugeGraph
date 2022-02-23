@@ -1,0 +1,162 @@
+
+
+//查询图中所有顶点  g代表的是整个图 一切查询都是以图开始
+g.V()
+
+//根据id查询顶点
+g.V('6:jin')
+g.V('6:jin','6:tom')
+
+//查询图中所有的边
+g.E()
+
+//根据id查询边
+g.E('S6:jin>9>>S6:tom')
+
+//id() 获取所有顶点或边的顶点
+g.V().id()
+
+//label()  获取顶点或边的label
+
+//properties() 获取顶点、边的属性。 .key() .value() 获取属性的名称或值
+g.V().properties()
+
+// 查询所有顶点的“lang”属性
+// 如果无“lang”属性的顶点将跳过
+g.V().properties('lang')
+
+
+// 查询所有顶点的属性
+g.V().valueMap()
+
+
+// 查询所有顶点的属性值
+// 效果等同于：
+// g.V().properties().value()
+g.V().values()
+
+
+
+// graph.schema().vertexLabel("xingshi").remove()
+// graph.schema().vertexLabel("huji").remove()
+// graph.schema().vertexLabel("budongchan").remove()
+// graph.schema().vertexLabel("shengfenzheng").remove()
+// graph.schema().vertexLabel("software").remove()
+// graph.schema().vertexLabel("person").remove()
+// graph.schema().vertexLabel("huzhu").remove()
+
+
+
+
+
+
+
+
+// //查看所有索引的类型
+graph.schema().getIndexLabels()
+
+// //查看所有属性
+graph.schema().getPropertyKeys()
+
+
+//删除属性 weight
+graph.schema().propertyKey("weight").remove()
+
+
+//查询所有顶点的类型
+
+
+//删除点label person
+graph.schema().vertexLabel("person").remove()
+
+
+//查询所有的边的类型
+graph.schema().getEdgeLabels()
+
+//删除边label rate
+graph.schema().edgeLabel("personByCity").remove()
+
+//删除index label personByAge
+graph.schema().indexLabel("createdByDate").remove()
+
+
+g.V()
+
+
+
+
+
+graph.schema().propertyKey("name").asText().create() // 创建姓名属性，文本类型
+graph.schema().propertyKey("age").asInt().create()   // 创建年龄属性，整数类型
+graph.schema().propertyKey("addr").asText().create() // 创建地址属性，文本类型
+graph.schema().propertyKey("lang").asText().create() // 创建语言属性，文本类型
+graph.schema().propertyKey("tag").asText().create()  // 创建标签属性，文本类型
+graph.schema().propertyKey("weight").asFloat().create() // 创建权重属性，浮点类型
+
+
+
+// 创建顶点类型：人"person"，包含姓名、年龄、地址等属性，使用自定义的字符串作为ID
+graph.schema().vertexLabel("person")
+              .properties("name", "age", "addr", "weight")
+              .nullableKeys("addr", "weight")
+              .useCustomizeStringId()
+              .create()
+// 创建顶点类型：软件"software"，包含名称、使用语言、标签等属性，使用名称作为主键
+graph.schema().vertexLabel("software")
+              .properties("name", "lang", "tag", "weight")
+              .primaryKeys("name")
+              .create()
+// 创建顶点类型：语言"language"，包含名称、使用语言等属性，使用名称作为主键
+graph.schema().vertexLabel("language")
+              .properties("name", "lang", "weight")
+              .primaryKeys("name")
+              .create()
+
+
+
+// 创建边类型：人认识人"knows"，此类边由"person"指向"person"
+graph.schema().edgeLabel("knows")
+              .sourceLabel("person").targetLabel("person")
+              .properties("weight")
+              .create()
+// 创建边类型：人创建软件"created"，此类边由"person"指向"software"
+graph.schema().edgeLabel("created")
+              .sourceLabel("person").targetLabel("software")
+              .properties("weight")
+              .create()
+// 创建边类型：软件包含软件"contains"，此类边由"software"指向"software"
+graph.schema().edgeLabel("contains")
+              .sourceLabel("software").targetLabel("software")
+              .properties("weight")
+              .create()
+// 创建边类型：软件定义语言"define"，此类边由"software"指向"language"
+graph.schema().edgeLabel("define")
+              .sourceLabel("software").targetLabel("language")
+              .properties("weight")
+              .create()
+// 创建边类型：软件实现软件"implements"，此类边由"software"指向"software"
+graph.schema().edgeLabel("implements")
+              .sourceLabel("software").targetLabel("software")
+              .properties("weight")
+              .create()
+// 创建边类型：软件支持语言"supports"，此类边由"software"指向"language"
+graph.schema().edgeLabel("supports")
+              .sourceLabel("software").targetLabel("language")
+              .properties("weight")
+              .create()
+
+
+--数据导入
+/bin/hugegraph-loader -g hugegraph -f example/file/struct.json -s example/file/schema.groovy -h 192.168.241.103 -p 8082
+
+
+
+
+
+
+
+1：明确表关联关系，数据导入的时候就必须指定数据之间的关系
+2：该项目是在哪个环境构建 dev pre？ 还是其他环境
+3：数据之间需要去关联，hugegraph没有实际数据之间关联这一操作，类似于left join  ，所以当需要层级钻取的时候，只能是单次查询，或者总体过滤
+4：明确具体的操作功能点，例如点击某个id能够查到数据，级联，钻取，展开等类似功能
+

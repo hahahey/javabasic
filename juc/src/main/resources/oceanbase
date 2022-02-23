@@ -1,0 +1,168 @@
+echo "
+* soft nofile 655350
+* hard nofile 655350
+* soft stack 20480
+* hard stack 20480
+* soft nproc 655360
+* hard nproc 655360
+* soft core unlimited
+* hard core unlimited " >>/etc/security/limits.conf
+
+
+
+echo "fs.aio-max-nr = 1048576" > /etc/sysctl.conf && sysctl -p
+
+ssh-keygen
+ssh-copy-id -i .ssh/id_rsa.pub root@192.168.135.102
+
+
+
+vim obd_observer_obproxy.yaml
+##内容如下，可根据机器配置进行修改，另外官方也给有系统参数说明，可去开源社区看
+## Only need to configure when remote login is required
+user:
+    username: root                    #用户名，前提三个节点保持一致
+    password: 123456                #密码 ，前提三个节点保持一致
+    key_file: /root/.ssh/id_rsa       #密钥，可省略
+
+####################    下面是 observer搭建参数  ##############################
+oceanbase-ce:
+  servers:
+    - name: z1         # zone名
+      # Please don't use hostname, only IP can be supported
+      ip: 192.168.233.103    # OB1 地址
+    - name: z2
+      ip: 192.168.233.104
+    - name: z3
+      ip: 192.168.233.105
+  global:
+    devname: ens33             # 设置要部署节点的网卡，这里需要注意，需要网络环境的，如果不能上网，请移步到社区找离线安装的
+    memory_limit: 8G           # 单节点是32G的 这里我给集群的单台内存配置是30G
+    lower_case_table_names: 1   # 数据库不区分大小写
+    foreign_key_checks: 0       # DML 语句不检查外建约束，DDL 操作不受影响
+    system_memory: 1G          # 系统剩余保留内存2G
+    sys_bkgd_migration_retry_num: 5       # 副本迁移失败时最多重试次数。
+    stack_size: 512K               # 设置程序函数调用栈的大小。 磁盘要512k 对齐，如果不是可能会启动失败
+    cpu_count: 4                  # cpu 16核
+    cache_wash_threshold: 1G         # 设置触发缓存清理的容量阈值。如果内存空间小于指定值时，内存空间将被清理。
+    __min_full_resource_pool_memory: 1073741824     # 默认普通租户的内存最小规格必须大于等于 5 GB，这里设置成1G，就说明我可以最低设置租户内存为1G
+    workers_per_cpu_quota: 10                   #  用于设置分配给每个 CPU 配额的工作线程数量。
+    schema_history_expire_time: 1d               # 元数据历史数据过期时间。
+    net_thread_count: 4                        # 设置网络 I/O 线程数
+    major_freeze_duty_time: Disable
+    minor_freeze_times: 10                     # 多少次小合并触发一次全局合并。
+    enable_separate_sys_clog: True               # 是否把系统事务日志与用户事务日志分开存储。
+    enable_merge_by_turn: FALSE
+    datafile_disk_percentage: 20                 # 数据库系统初始化用于存储数据，例如我这里设置了40，表示百分之四十，那么我单节点是1TB的 约400多G空间将会被立即占用
+    syslog_level: WARN                       # 日志警报级别
+    enable_syslog_recycle: True                  # 开启回收系统日志的功能
+    max_syslog_file_count: 4                  # 日志文件数量
+    cluster_id: 1                           # 集群ID
+    # observer cluster name, consistent with obproxy's cluster_name
+    appname: Oceanbase                        # 集群名，要与下面obproxy的对应一致
+    ###下面设置节点信息
+  z1:
+    mysql_port: 2881            # 数据库端口
+    rpc_port: 2882            # 远程访问的协议端口号
+    home_path: /root/data/observer      # 数据目录
+    zone: zone1                     # 设置节点所在的 Zone 的名字
+  z2:
+    mysql_port: 2881
+    rpc_port: 2882
+    home_path: /root/data/observer
+    zone: zone2
+  z3:
+    mysql_port: 2881
+    rpc_port: 2882
+    home_path: /root/data/observer
+    zone: zone3
+########################## 以下是obrpoxy的 搭建参数 ######################3
+obproxy:
+  servers:
+    - 192.168.233.103
+  global:
+    listen_port: 2883
+    home_path: /root/data/obproxy
+    # oceanbase root server list
+    # format: ip:mysql_port,ip:mysql_port
+    rs_list: 192.168.233.103:2881;192.168.233.104:2881;192.168.233.105:2881
+    enable_cluster_checkout: false
+
+obd cluster deploy test -c  obd_observer_obproxy.yaml
+obd cluster list
+obd cluster start test
+yum -y install net-tools
+netstat -nltp
+obd cluster stop test
+obd cluster destroy test
+
+
+https://www.cnblogs.com/binliubiao/p/15201453.html
+https://blog.csdn.net/qq_26129413/article/details/117996656?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522163517192116780261929186%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fall.%2522%257D&request_id=163517192116780261929186&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~rank_v31_ecpm-12-117996656.first_rank_v2_pc_rank_v29&utm_term=oceanbase%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2&spm=1018.2226.3001.4187
+
+
+
+
+vi 8g.yaml
+##内容如下，可根据机器配置进行修改，另外官方也给有系统参数说明，可去开源社区看
+## Only need to configure when remote login is required
+user:
+    username: root                    #用户名，前提三个节点保持一致
+    password: 123456                #密码 ，前提三个节点保持一致
+    key_file: /root/.ssh/id_rsa       #密钥，可省略
+
+####################    下面是 observer搭建参数  ##############################
+oceanbase-ce:
+  servers:
+    - name: z1         # zone名
+      # Please don't use hostname, only IP can be supported
+      ip: 192.168.233.103    # OB1 地址
+    - name: z2
+      ip: 192.168.233.104
+  global:
+    devname: ens33             # 设置要部署节点的网卡，这里需要注意，需要网络环境的，如果不能上网，请移步到社区找离线安装的
+    memory_limit: 8G           # 单节点是32G的 这里我给集群的单台内存配置是30G
+    lower_case_table_names: 1   # 数据库不区分大小写
+    foreign_key_checks: 0       # DML 语句不检查外建约束，DDL 操作不受影响
+    system_memory: 1G          # 系统剩余保留内存2G
+    sys_bkgd_migration_retry_num: 5       # 副本迁移失败时最多重试次数。
+    stack_size: 512K               # 设置程序函数调用栈的大小。 磁盘要512k 对齐，如果不是可能会启动失败
+    cpu_count: 4                  # cpu 16核
+    cache_wash_threshold: 1G         # 设置触发缓存清理的容量阈值。如果内存空间小于指定值时，内存空间将被清理。
+    __min_full_resource_pool_memory: 1073741824     # 默认普通租户的内存最小规格必须大于等于 5 GB，这里设置成1G，就说明我可以最低设置租户内存为1G
+    workers_per_cpu_quota: 10                   #  用于设置分配给每个 CPU 配额的工作线程数量。
+    schema_history_expire_time: 1d               # 元数据历史数据过期时间。
+    net_thread_count: 4                        # 设置网络 I/O 线程数
+    major_freeze_duty_time: Disable
+    minor_freeze_times: 10                     # 多少次小合并触发一次全局合并。
+    enable_separate_sys_clog: True               # 是否把系统事务日志与用户事务日志分开存储。
+    enable_merge_by_turn: FALSE
+    datafile_disk_percentage: 20                 # 数据库系统初始化用于存储数据，例如我这里设置了40，表示百分之四十，那么我单节点是1TB的 约400多G空间将会被立即占用
+    syslog_level: WARN                       # 日志警报级别
+    enable_syslog_recycle: True                  # 开启回收系统日志的功能
+    max_syslog_file_count: 4                  # 日志文件数量
+    cluster_id: 1                           # 集群ID
+    # observer cluster name, consistent with obproxy's cluster_name
+    appname: Oceanbase                        # 集群名，要与下面obproxy的对应一致
+    ###下面设置节点信息
+  z1:
+    mysql_port: 2881            # 数据库端口
+    rpc_port: 2882            # 远程访问的协议端口号
+    home_path: /root/data/observer      # 数据目录
+    zone: zone1                     # 设置节点所在的 Zone 的名字
+  z2:
+    mysql_port: 2881
+    rpc_port: 2882
+    home_path: /root/data/observer
+    zone: zone2
+########################## 以下是obrpoxy的 搭建参数 ######################3
+obproxy:
+  servers:
+    - 192.168.233.103
+  global:
+    listen_port: 2883
+    home_path: /root/data/obproxy
+    # oceanbase root server list
+    # format: ip:mysql_port,ip:mysql_port
+    rs_list: 192.168.233.103:2881;192.168.233.104:2881
+    enable_cluster_checkout: false

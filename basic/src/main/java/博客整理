@@ -1,0 +1,65 @@
+
+集合
+https://www.cnblogs.com/LiaHon/tag/
+
+
+
+spring
+https://www.cnblogs.com/xiaoxi/category/891936.html
+
+
+
+
+
+git clone 缓慢解决办法
+《一》
+(1)在 https://www.ipaddress.com/ 查找 http://github.com 和 http://global-ssl.fastly.Net对应的ip地址
+(2)将对应的ip和name添加到 C:\Windows\System32\drivers\etc\ 下的hosts文件里
+# GItHub
+199.232.68.249     github.global.ssl.fastly.net
+140.82.112.3       github.com
+(3)在终端刷新DNS
+ipconfig/flushdns
+
+《二》
+使用镜像库下载
+git clone -b branch-2.2 https://github.com.cnpmjs.org/apache/spark.git
+
+
+
+github上已经有仓库时，把一个已有的本地仓库与之关联，然后把内容推送到github仓库
+git remote add origin https://github.com/xxx.git
+git push -u origin master 把本地的master分支和远程的master分支关联起来
+
+git push origin master 把本地master分支的最新修改推送到github上
+
+git 使用博客
+https://zhuanlan.zhihu.com/p/158076293
+
+git remote -v 列出所有远程仓库
+
+
+git 全局设置
+    git config --global user.name "yourName"
+    git config --global user.email "xxx@163.com"
+
+
+
+一：本地 git bash 操作
+	1：初始化本地仓库,在你需要提交的目录下初始化 git init ,此时仓库变为你本地的仓库
+	2：添加你的文件到暂存区去， git add -A (所有文件)
+	3：提交暂存区的文件到本地仓库中 git commit -m "commit information"
+二：远程 github 操作
+	1：github上新建一个repository ,名字可以不一样
+	2：获取到你仓库的地址 https://github.com/xxx/your_repository.git
+三：本地 git bash 操作
+	1：关联本地仓库和github仓库  git remote add origin https://github.com/xxx/your_repository.git
+	    git remote add 远端仓库的名称，一般都叫origin  远端仓库地址
+	2：然后把本地仓库的内容推送到 github  git push -u origin master
+	    master 本地仓库的分支名称，如果分支不对，则push失败
+
+四：远程 github 操作
+	检查刚创建的仓库里是不是已经有被推送的文件
+
+修改本地分支的名称
+git branch -m newName

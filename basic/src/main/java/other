@@ -1,0 +1,245 @@
+
+
+
+/opt/elk/logstash-7.0.1/bin/logstash -f ./log_es.conf.bak  --path.data=/root/lzk
+
+
+
+logstash 
+input{
+    elasticsearch{
+        hosts => ["https://172.16.10.231:9200"]
+        index => "datamining_execute_log"
+        size => 1000
+        scroll => "5m"
+        docinfo => false
+        ssl => true
+        user => "admin"
+        password => "cnhqd@123"
+        ca_file => "/usr/share/logstash/config/root-ca.pem"
+    }
+}
+
+output{
+    file{
+        path => "/root/lzk/es.log"
+    }
+    stdout{
+        codec=> json_lines # 这个是是否输出日志
+       }
+}
+
+
+
+input{
+    elasticsearch{
+        hosts => ["localhost:9200"]
+        index => "dim_livehoodeconomya_performance_1000w"
+        size => 10000
+        scroll => "5m"
+        docinfo => false
+        ssl => true
+        user => "admin"
+        password => "cnhqd@123"
+        ca_file => "/usr/share/logstash/config/root-ca.pem"
+    }
+}
+
+filter{
+mutate {
+remove_field => ["@timestamp"]
+remove_field => ["@version"]
+}
+}
+
+
+output{
+   
+   kafka {
+    bootstrap_servers => "192.168.22.19:9092,192.168.22.20:9092,192.168.22.21:9092"    #生产者
+codec => json
+        topic_id => "kafka_1000w"
+  }   
+
+
+}
+
+
+
+
+
+
+
+配置yum源
+1. 备份原来的文件
+mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
+2. 进入到yum源配置文件所在的文件夹
+cd /etc/yum.repos.d/
+3. 下载163的yum源配置文件到该文件夹内
+CentOS7
+	wget http://mirrors.163.com/.help/CentOS7-Base-163.repo
+CentOS6
+	wget http://mirrors.163.com/.help/CentOS6-Base-163.repo
+CentOS5
+	wget http://mirrors.163.com/.help/CentOS5-Base-163.repo
+阿里的yum源
+CentOS7
+	wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+CentOS6
+	wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo
+CentOS5
+	wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-5.repo
+4. 运行yum makecache生成缓存
+yum makecache
+5. 更新yum源
+yum -y update
+
+
+
+问题：pvcreate not found
+安装lvm2
+yum -y install lvm2
+
+centos7 增加磁盘分区挂载 lvm
+1.查看主机现有磁盘情况
+fdisk -l
+2.对磁盘进行分区
+fdisk /dev/vdc (选择要操作分区的磁盘)
+m 获取帮助
+p 打印磁盘现有分区情况
+n 新建一个分区
+p 建立分区
+分区号(1-4,默认1):1 设置分区编号
+起始扇区 (2048-16777215，默认为 2048)：2048   （选择磁盘扇区的起始位置）
+Last 扇区, +扇区 or +size{K,M,G} (2048-16777215，默认为 16777215)：   （此处敲击回车，将磁盘剩余的所有空间全部分区）
+p 查看磁盘现有分区情况 磁盘中出现1号分区
+
+3.  更改分区类型
+需要将分区类型改成linux lvm卷，才能创建lvm
+t (更改分区类型)
+1 选择要更改分区的分区编号
+L 查看所有的分区类型
+8e 选择linux lvm类型
+w 保存退出
+
+4 fdisk -l 查看磁盘情况
+
+5 创建pv  (物理卷)
+
+简单指令：
+			1. pv相关：pvdisplay、pvs、pvscan，pvcreate
+			2. vg相关：vgdisplay、vgs、vgscan，vgcreate
+			3. lv相关：lvdisplay、lvs、lvscan，lvcreate
+
+pvcreate /dev/vdc1
+
+		如果 pvcreate not found
+		安装lvm2
+		yum -y install lvm2
+pvdisplay 查看现有pv详情
+
+
+6 创建vg 卷组
+vgcreate hqd /dev/vdc1
+
+7 创建lv 逻辑卷
+创建指容量  lvcreate -L 8G -n opt hqd
+使用剩余的容量  lvcreate -l 100%free -n opt hqd
+
+8 格式化lv
+mkfs.ext4 /dev/hqd/opt
+
+9 挂载新磁盘分区
+mount /dev/hqd/opt /opt
+
+10 df -h 检查挂载情况
+
+11 设置开机自动挂载
+vi /etc/fstab  行尾添加
+/dev/hqd/opt /opt ext4 defaults 1 1
+
+12 验证挂载是否成功
+umount /opt
+df -h
+mount -a
+df -h
+
+
+rpm -qa | grep ntp 查看是否安装ntp ，如果只有ntpdate
+
+安装ntp时间同步
+yum -y install ntp ntpdate
+vi /etc/ntp.conf
+注释掉里面的server
+server  127.0.0.1 增加ntp服务器
+ntpdate 127.0.0.1 同步
+
+ntpstat  查看同步状态
+
+systemctl start ntpd  启动ntp服务
+systemctl enable ntpd.service  设置开机启动服务 开机启动ntp服务
+
+
+
+修改hostname
+hostnamectl set-hostname 主机名
+
+
+安装jdk11
+yum search java-11-openjdk
+yum install -y java-11-openjdk
+
+
+
+ES安装步骤
+
+adduser es
+passwd es
+
+
+[1]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535]
+vi /etc/security/limits.conf 文件末尾添加
+*       soft    nofile  65536
+*       hard    nofile  65536
+*       soft    nproc   4096
+*       hard    nproc   4096
+
+
+[1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+vi /etc/sysctl.conf
+vm.max_map_count=262144
+sysctl -p
+
+
+./sgadmin.sh -h 192.168.22.22 -cd /opt/elk/es/elasticsearch-7.0.1/plugins/search-guard-7/sgconfig -icl -key /opt/elk/es/elasticsearch-7.0.1/config/kirk-key.pem -cert /opt/elk/es/elasticsearch-7.0.1/config/kirk.pem -cacert /opt/elk/es/elasticsearch-7.0.1/config/root-ca.pem -nhnv -arc
+
+
+验证logstash是否安装成功
+bin/logstash -e 'input { stdin { } } output { stdout {} }'
+
+
+启动logstash
+nohup logstash -f xxx.conf >log.log 2>&1 &
+
+
+
+
+安装telnet
+检查是否安装 rpm -qa telnet-server
+
+安装 yum -y install telnet-server
+
+rpm -qa telnet
+
+yum install telnet
+
+service xinetd restart
+
+Failed to restart xinetd.service: Unit not found.
+	yum -y install xinetd
+
+
+
+
+
+
