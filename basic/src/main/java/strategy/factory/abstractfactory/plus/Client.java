@@ -27,6 +27,8 @@ public class Client {
         loginOperation.insert(login);
         loginOperation.getLogin(1);
 
+
+
     }
 
 }
