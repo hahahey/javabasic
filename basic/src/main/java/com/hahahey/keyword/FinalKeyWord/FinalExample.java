@@ -1,4 +1,4 @@
-package com.hahahey.FinalKeyWord;
+package com.hahahey.keyword.FinalKeyWord;
 
 
 public class FinalExample {

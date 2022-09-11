@@ -17,7 +17,6 @@ import java.util.concurrent.*;
 public class CountDownLatchDemo2 {
 
     static ThreadPoolExecutor executor;
-
     static {
         executor = new ThreadPoolExecutor(
                 3,

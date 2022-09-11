@@ -2,31 +2,28 @@ package com.hahahey.httpclient;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
 
 /**
  * @author hahahey
  * @date 2022-09-07 22:47
  */
-public class HttpClientDemo2 {
+public class HttpClientDemo20 {
 
 
     private static PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+
     static {
-    //最大连接数  500
+        //最大连接数  500
         connectionManager.setMaxTotal(500);
-    //路由连接数 500
+        //路由连接数 500
         connectionManager.setDefaultMaxPerRoute(500);
     }
 
@@ -36,13 +33,11 @@ public class HttpClientDemo2 {
             .setConnectionRequestTimeout(2000)
             .build();
 
-    private static CloseableHttpClient getClient(){
-       return HttpClients.custom().setDefaultRequestConfig(requestConfig)
+    private static CloseableHttpClient getClient() {
+        return HttpClients.custom().setDefaultRequestConfig(requestConfig)
                 .setConnectionManager(connectionManager)
                 .build();
     }
-
-
 
 
     public static void main(String[] args) throws IOException {
